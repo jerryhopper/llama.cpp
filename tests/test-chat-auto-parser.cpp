@@ -111,6 +111,7 @@ int main(int argc, char * argv[]) {
     t.test("cohere", test_cohere_analysis);
     t.test("nemotron", test_nemotron_analysis);
     t.test("laguna", test_laguna_analysis);
+    t.test("laguna-s", test_laguna_s_analysis);
     t.test("laguna-xs2", test_laguna_xs2_analysis);
     t.test("smollm3", test_smollm3_analysis);
     t.test("standard_json_tools", test_standard_json_tools_formats);
@@ -1431,6 +1432,28 @@ static void test_laguna_analysis(testing & t) {
     t.test("Laguna reasoning detection", test_laguna_reasoning_detection);
     t.test("Laguna tool format", test_laguna_tool_format);
     t.test("Laguna stop string", test_laguna_stop_string);
+}
+
+static common_chat_template load_laguna_s_template(testing & t) {
+    return load_template(t, "models/templates/poolside-Laguna-S-2.1.jinja");
+}
+static void test_laguna_s_reasoning_detection(testing & t) {
+    common_chat_template tmpl = load_laguna_s_template(t);
+    struct autoparser analysis;
+    analysis.analyze_template(tmpl);
+    t.assert_equal("Laguna-S(v8) reasoning_start should be '<think>'", "<think>", analysis.reasoning.start);
+    t.assert_equal("Laguna-S(v8) reasoning_end should be '</think>'", "</think>", analysis.reasoning.end);
+    t.assert_equal("Laguna-S(v8) reasoning should be TAG_BASED", reasoning_mode::TAG_BASED, analysis.reasoning.mode);
+}
+static void test_laguna_s_tool_format(testing & t) {
+    common_chat_template tmpl = load_laguna_s_template(t);
+    struct autoparser analysis;
+    analysis.analyze_template(tmpl);
+    t.assert_equal("Laguna-S(v8) arg_value_suffix should be '</arg_value>'", "</arg_value>", analysis.tools.arguments.value_suffix);
+}
+static void test_laguna_s_analysis(testing & t) {
+    t.test("Laguna-S(v8) reasoning detection", test_laguna_s_reasoning_detection);
+    t.test("Laguna-S(v8) tool format", test_laguna_s_tool_format);
 }
 
 static common_chat_template load_laguna_xs2_template(testing & t) {
