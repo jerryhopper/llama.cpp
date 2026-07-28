@@ -1089,7 +1089,7 @@ struct common_speculative_impl_draft_dflash : public common_speculative_impl {
                 {
                     size_t n_bad = 0;
                     for (auto & v : features_buf) {
-                        if (!isfinite(v)) {
+                        if (!std::isfinite(v)) {
                             v = v != v ? 0.0f : (v > 0.0f ? 65504.0f : -65504.0f);
                             n_bad++;
                         }
